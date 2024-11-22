@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose'); //ODM as Object Data Modeling
+require('dotenv').config();
 
 const ejs = require('ejs');
 const path = require('path');
@@ -11,7 +12,16 @@ const pageController = require('./controllers/pageControllers');
 const app = express();
 
 //connect to db
-mongoose.connect('mongodb://localhost/cleanblog-test-db');
+mongoose
+  .connect(
+    `mongodb+srv://iincekaan:${process.env.MONGODB_PASSWORD}@cluster0.ardhh.mongodb.net/cleanblog-test-db?retryWrites=true&w=majority&appName=Cluster0`
+  )
+  .then(() => {
+    console.log('Connected to DB');
+  })
+  .catch((err) => {
+    console.log('Connection failed', err);
+  });
 
 //Template Engine
 app.set('view engine', 'ejs');
@@ -41,7 +51,7 @@ app.get('/post', pageController.getPostPage);
 //edit post
 app.get('/posts/edit/:id', pageController.getEditPostPage);
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
