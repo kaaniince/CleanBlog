@@ -14,7 +14,7 @@ const app = express();
 //connect to db
 mongoose
   .connect(
-    `mongodb+srv://iincekaan:${process.env.MONGODB_PASSWORD}@cluster0.ardhh.mongodb.net/cleanblog-test-db?retryWrites=true&w=majority&appName=Cluster0`
+    `mongodb+srv://iincekaan:${process.env.MONGODB_PASSWORD}@cluster0.ardhh.mongodb.net/cleanblog-db?retryWrites=true&w=majority&appName=Cluster0`
   )
   .then(() => {
     console.log('Connected to DB');
