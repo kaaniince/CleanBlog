@@ -3,8 +3,11 @@ const mongoose = require('mongoose'); //ODM as Object Data Modeling
 
 const ejs = require('ejs');
 const path = require('path');
+const methodOverride = require('method-override');
 const Post = require('./models/Post');
 
+const postController = require('./controllers/postControllers');
+const pageController = require('./controllers/pageControllers');
 const app = express();
 
 //connect to db
@@ -15,43 +18,28 @@ app.set('view engine', 'ejs');
 
 //Middleware
 app.use(express.static('public'));
+app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 
 //the received response is sent as completed
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //Routes
-app.get('/', async (req, res) => {
-  //res.sendFile(path.resolve(__dirname, 'temp/index.html'));
-  const posts = await Post.find({});
-  res.render('index', {
-    posts,
-  });
-});
-
+app.get('/', postController.getAllPosts);
 //sending the post to post.ejs
-app.get('/posts/:id', async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  res.render('post', {
-    post,
-  });
-});
+app.get('/posts/:id', postController.getPost);
+//create post
+app.post('/posts', postController.createPost);
+//update post
+app.put('/posts/:id', postController.updatePost);
+//delete post
+app.delete('/posts/:id', postController.deletePost);
 
-app.get('/about', (req, res) => {
-  res.render('about');
-});
-app.get('/add_post', (req, res) => {
-  res.render('add_post');
-});
-
-app.get('/post', (req, res) => {
-  res.render('post');
-});
-
-app.post('/posts', async (req, res) => {
-  await Post.create(req.body);
-  res.redirect('/');
-});
+app.get('/about', pageController.getAboutPage);
+app.get('/add_post', pageController.getAddPostPage);
+app.get('/post', pageController.getPostPage);
+//edit post
+app.get('/posts/edit/:id', pageController.getEditPostPage);
 
 const port = 3000;
 app.listen(port, () => {
